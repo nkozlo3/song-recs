@@ -9,7 +9,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "songs")
 public class Song {
-
+    // change
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
