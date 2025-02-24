@@ -34,4 +34,11 @@ public class WebController {
         return "results"; // thymeleaf ✨magic✨ again !
     }
 
+    @GetMapping("/suggestions")
+    public String suggestions(@RequestParam("songGenre") String songGenre, @RequestParam("songTempo") double tempo, Model model) throws IOException {
+        List<Song> suggestions = songService.getCachedSongsByTempoAndGenreOrGetAndPopulate(tempo, songGenre);
+        model.addAttribute("suggestions", suggestions);
+        return "suggestions";
+    }
+
 }

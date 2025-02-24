@@ -11,8 +11,12 @@ import java.util.List;
 @Repository
 public interface SongRepository extends JpaRepository<Song, Long> {
 
-    List<Song> findByTrackContainingIgnoreCase(String title);
+    List<Song> findByTrackContainingIgnoreCaseOrArtistContainingIgnoreCaseOrAlbumContainingIgnoreCase(String track, String artist, String album);
+
+    List<Song> findByTempoGreaterThanEqualAndTempoLessThanEqualAndGenreContainingIgnoreCase(double minTempo, double maxTempo, String genre);
 
     Song findByTrackId(String trackId);
+
+    boolean existsByTrackId(String trackId);
 
 }
