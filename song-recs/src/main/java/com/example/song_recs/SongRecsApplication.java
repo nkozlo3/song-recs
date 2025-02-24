@@ -20,12 +20,4 @@ public class SongRecsApplication {
     public static void main(String[] args) throws IOException {
         SpringApplication.run(SongRecsApplication.class, args);
     }
-
-    @Bean
-    public CommandLineRunner run(SongService songService) throws IOException {
-        return args -> {
-//            songService.getCachedSongsOrGetAndPopulate("love");
-            songService.getCachedSongsByTempoAndGenreOrGetAndPopulate(100, "Rock");
-        };
-    }
 }
