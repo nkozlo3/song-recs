@@ -19,10 +19,16 @@
 
     <ul>
         <li th:each="song : ${suggestions}">
-            <strong th:text="${song.getTrack()}"></strong> by <span th:text="${song.getArtist()}"></span>
+            <button th:data-artist=|${song.getArtist()}|
+                    th:data-track=|${song.getTrack()}|
+                    th:target="_blank"
+                    th:onclick="|window.location.href='https://www.google.com/search?q=' + this.getAttribute('data-track') + ' by ' + this.getAttribute('data-artist')|">
+                <strong th:text="${song.getTrack()}"></strong> by <span th:text="${song.getArtist()}"></span></button>
         </li>
     </ul>
     <a href="/search">New search</a>
+
+    <button onclick="history.back()">Go Back</button>
 </div>
 
 </body>
