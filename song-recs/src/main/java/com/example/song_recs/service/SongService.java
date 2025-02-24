@@ -38,7 +38,7 @@ public class SongService {
 
     public List<Song> getCachedSongsByTempoAndGenreOrGetAndPopulate(double tempo, String genre) throws IOException {
         List<Song> songs = songRepository.findByTempoGreaterThanEqualAndTempoLessThanEqualAndGenreContainingIgnoreCase(tempo - 20, tempo + 20, genre);
-        if (songs.isEmpty() || songs.size() < 20) {
+        if (songs.isEmpty() || songs.size() < 35) {
             logger.info("Finding new songs");
             populateDatabase("irrelevant", tempo);
             songs = songRepository.findByTempoGreaterThanEqualAndTempoLessThanEqualAndGenreContainingIgnoreCase(tempo - 20, tempo + 20, genre);
@@ -50,7 +50,7 @@ public class SongService {
 
     public List<Song> getCachedSongsOrGetAndPopulate(String query) throws IOException {
         List<Song> songs = songRepository.findByTrackContainingIgnoreCaseOrArtistContainingIgnoreCaseOrAlbumContainingIgnoreCase(query, query, query);
-        if (songs.isEmpty() || songs.size() < 10) {
+        if (songs.isEmpty() || songs.size() < 20) {
             logger.info("finding new songs, this may take a while");
             populateDatabase(query, -100);
             songs = songRepository.findByTrackContainingIgnoreCaseOrArtistContainingIgnoreCaseOrAlbumContainingIgnoreCase(query, query, query);
