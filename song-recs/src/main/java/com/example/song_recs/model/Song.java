@@ -18,8 +18,8 @@ public class Song {
     private String trackId;
     @Column(name = "artist_id")
     private String artist_id;
-    @Column(name = "genre_name")
-    private String genre_name;
+    @Column(name = "genre")
+    private String genre;
     @Column(name = "album_id")
     private String album_id;
     @Column(name = "tempo")
@@ -34,11 +34,11 @@ public class Song {
 
     public Song() {}
 
-    public Song(String trackId, String artist_id, String genre_name, String album_id, double tempo, String track, String artist, String album) {
+    public Song(String trackId, String artist_id, String genre, String album_id, double tempo, String track, String artist, String album) {
         this.tempo = tempo;
         this.trackId = trackId;
         this.artist_id = artist_id;
-        this.genre_name = genre_name;
+        this.genre = genre;
         this.album_id = album_id;
         this.track = track;
         this.artist = artist;

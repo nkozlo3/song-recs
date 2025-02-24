@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>There's not very much here</title>
+</head>
+<body>
+<h1>Sorry guys, this API is really not very good!</h1>
+<h2>But, if something is here it has the same genre and a similar tempo!!</h2>
+
+<div th:if="${#lists.isEmpty(suggestions)}">
+    <p>Sorry guy, we didn't find songs matching that genre and tempo. Maybe go somewhere reputable next time!</p>
+
+    <a href="/search">Go back to searching</a>
+</div>
+
+<div th:if="${!#lists.isEmpty(suggestions)}">
+    <h3>Similar stuff✨✨</h3>
+
+    <ul>
+        <li th:each="song : ${suggestions}">
+            <strong th:text="${song.getTrack()}"></strong> by <span th:text="${song.getArtist()}"></span>
+        </li>
+    </ul>
+    <a href="/search">New search</a>
+</div>
+
+</body>
+</html>

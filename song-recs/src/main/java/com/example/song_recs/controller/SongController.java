@@ -24,7 +24,7 @@ public class SongController {
 
     @GetMapping("/song/{title}")
     public List<Song> getSongInformation(@PathVariable String title) {
-        return songRepository.findByTrackContainingIgnoreCase(title);
+        return songRepository.findByTrackContainingIgnoreCaseOrArtistContainingIgnoreCaseOrAlbumContainingIgnoreCase(title, title, title);
     }
 
 }
