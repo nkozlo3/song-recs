@@ -21,6 +21,11 @@ public class WebController {
         this.songService = new SongService(songRepository);
     }
 
+    @GetMapping("/")
+    public String index(Model model) {
+        return "index";
+    }
+
     @GetMapping("/search")
     public String search() {
         return "search"; // thymeleaf ✨magic✨

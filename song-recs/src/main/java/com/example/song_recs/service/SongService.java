@@ -9,14 +9,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URLEncoder;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
@@ -29,6 +27,7 @@ public class SongService {
     private final OkHttpClient okHttpClient;
     private final ObjectMapper objectMapper;
     private final String genre_ = "BADGENRE";
+    private static final Logger logger = LoggerFactory.getLogger(SongService.class);
 
 
     public SongService(SongRepository songRepository) {
@@ -40,11 +39,11 @@ public class SongService {
     public List<Song> getCachedSongsByTempoAndGenreOrGetAndPopulate(double tempo, String genre) throws IOException {
         List<Song> songs = songRepository.findByTempoGreaterThanEqualAndTempoLessThanEqualAndGenreContainingIgnoreCase(tempo - 20, tempo + 20, genre);
         if (songs.isEmpty() || songs.size() < 20) {
-            log("Finding new songs");
+            logger.info("Finding new songs");
             populateDatabase("irrelevant", tempo);
             songs = songRepository.findByTempoGreaterThanEqualAndTempoLessThanEqualAndGenreContainingIgnoreCase(tempo - 20, tempo + 20, genre);
         } else {
-            log("Songs already exist, hurray for cache");
+            logger.info("Songs already exist, hurray for cache");
         }
         return songs;
     }
@@ -52,11 +51,11 @@ public class SongService {
     public List<Song> getCachedSongsOrGetAndPopulate(String query) throws IOException {
         List<Song> songs = songRepository.findByTrackContainingIgnoreCaseOrArtistContainingIgnoreCaseOrAlbumContainingIgnoreCase(query, query, query);
         if (songs.isEmpty() || songs.size() < 10) {
-            log("finding new songs, this may take a while");
+            logger.info("finding new songs, this may take a while");
             populateDatabase(query, -100);
             songs = songRepository.findByTrackContainingIgnoreCaseOrArtistContainingIgnoreCaseOrAlbumContainingIgnoreCase(query, query, query);
         } else {
-            log("songs already exist, hurray for cache");
+            logger.info("songs already exist, hurray for cache");
         }
         return songs;
     }
@@ -143,7 +142,7 @@ public class SongService {
 
                 if (!genre_name.isEmpty() && !songRepository.existsByTrackId(trackId) && tempo != 0) {
                     Song song = new Song(trackId, artist_id, genre_name, album_id, tempo, track, artist_name, album_name);
-                    log("NEW SONG ADDED GUYS IT HAS name " + track);
+                    logger.info("NEW SONG ADDED GUYS IT HAS name {}", track);
 
                     songRepository.save(song);
                 }

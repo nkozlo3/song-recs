@@ -21,6 +21,7 @@
 
             <button th:data-genre=|${song.getGenre()}|
                     th:data-tempo=|${song.getTempo()}|
+                    th:formtarget="_blank"
                     th:onclick="|window.location.href='/suggestions?songGenre=' + this.getAttribute('data-genre') + '&songTempo=' + this.getAttribute('data-tempo')|"
                     type="submit"><strong th:text="${song.getTrack()}"></strong> by <span
                     th:text="${song.getArtist()}"></span>, genre/tempo: <span
