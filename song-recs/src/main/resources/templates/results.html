@@ -11,12 +11,20 @@
     <p>Sorry we didn't find anything even remotely close to that title by title, artist, or album on deezer or
         cached</p>
     <p>OR more likely, my website is broken!!</p>
+
+    <a href="/search">New Search fella</a>
 </div>
 <div th:if="${!#lists.isEmpty(suggestions)}">
     <h3>What you might want</h3>
     <ul>
         <li th:each="song : ${suggestions}">
-            <button><strong th:text="${song.getTrack()}"></strong> by <span th:text="${song.getArtist()}"></span>
+
+            <button th:data-genre=|${song.getGenre()}|
+                    th:data-tempo=|${song.getTempo()}|
+                    th:onclick="|window.location.href='/suggestions?songGenre=' + this.getAttribute('data-genre') + '&songTempo=' + this.getAttribute('data-tempo')|"
+                    type="submit"><strong th:text="${song.getTrack()}"></strong> by <span
+                    th:text="${song.getArtist()}"></span>, genre/tempo: <span
+                    th:text="|${song.getGenre()} / ${song.getTempo()}|"></span>
             </button>
         </li>
     </ul>
