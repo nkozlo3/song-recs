@@ -32,3 +32,6 @@ build/
 ### VS Code ###
 .vscode/
 
+
+### secrets ###
+song-recs/src/main/resources/application.properties
