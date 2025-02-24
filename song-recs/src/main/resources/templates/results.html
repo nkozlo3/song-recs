@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Possible results</title>
+</head>
+<body>
+<h1>Songs from Deezer or MY database</h1>
+<h2>These are definitely not what you are looking for!!</h2>
+<div th:if="${#lists.isEmpty(suggestions)}">
+    <p>Sorry we didn't find anything even remotely close to that title by title, artist, or album on deezer or
+        cached</p>
+    <p>OR more likely, my website is broken!!</p>
+</div>
+<div th:if="${!#lists.isEmpty(suggestions)}">
+    <h3>What you might want</h3>
+    <ul>
+        <li th:each="song : ${suggestions}">
+            <button><strong th:text="${song.getTrack()}"></strong> by <span th:text="${song.getArtist()}"></span>
+            </button>
+        </li>
+    </ul>
+    <a href="/search">New Search fella</a>
+</div>
+
+</body>
+</html>

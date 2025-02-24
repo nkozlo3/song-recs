@@ -14,26 +14,34 @@ public class Song {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(name = "track_id")
-    private String track_id;
+    @Column(name = "trackId")
+    private String trackId;
     @Column(name = "artist_id")
     private String artist_id;
-    @Column(name = "genre_id")
-    private String genre_id;
+    @Column(name = "genre_name")
+    private String genre_name;
     @Column(name = "album_id")
     private String album_id;
     @Column(name = "tempo")
-    private String tempo;
-    @Column(name = "title")
-    private String title;
+    private double tempo;
+    @Column(name = "name")
+    private String track;
+    @Column(name = "artist")
+    private String artist;
+    @Column(name = "album")
+    private String album;
+
 
     public Song() {}
 
-    public Song(String track_id, String artist_id, String genre_id, String album_id, String tempo) {
-        this.track_id = track_id;
-        this.artist_id = artist_id;
-        this.genre_id = genre_id;
-        this.album_id = album_id;
+    public Song(String trackId, String artist_id, String genre_name, String album_id, double tempo, String track, String artist, String album) {
         this.tempo = tempo;
+        this.trackId = trackId;
+        this.artist_id = artist_id;
+        this.genre_name = genre_name;
+        this.album_id = album_id;
+        this.track = track;
+        this.artist = artist;
+        this.album = album;
     }
 }

@@ -15,11 +15,9 @@ import java.util.List;
 
 @Controller
 public class WebController {
-    private SongRepository songRepository;
-    private SongService songService;
+    private final SongService songService;
 
     public WebController(SongRepository songRepository) {
-        this.songRepository = songRepository;
         this.songService = new SongService(songRepository);
     }
 
@@ -29,10 +27,11 @@ public class WebController {
     }
 
     @GetMapping("/results")
-    public String results(@RequestParam("SongTitle") String SongTitle, Model model) throws IOException {
-        List<Song> suggestions = songRepository.findByTitleContainingIgnoreCase(SongTitle);
+    public String results(@RequestParam("songTitle") String songTitle, Model model) throws IOException {
+        List<Song> suggestions = songService.getCachedSongsOrGetAndPopulate(songTitle);
+        model.addAttribute("suggestions", suggestions);
 
-        return "results";
+        return "results"; // thymeleaf ✨magic✨ again !
     }
 
 }
