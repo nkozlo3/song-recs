@@ -17,14 +17,18 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
+
+import static java.rmi.server.LogStream.log;
 
 @Service
 public class SongService {
     private final SongRepository songRepository;
     private final OkHttpClient okHttpClient;
     private final ObjectMapper objectMapper;
+    private final String genre_ = "BADGENRE";
 
 
     public SongService(SongRepository songRepository) {
@@ -33,20 +37,26 @@ public class SongService {
         this.objectMapper = new ObjectMapper();
     }
 
-    public List<Song> getCachedSongsByTempoAndGenreOrGetAndPopulate(String genre, double tempo) {
-
-
-        return new ArrayList<>();
+    public List<Song> getCachedSongsByTempoAndGenreOrGetAndPopulate(double tempo, String genre) throws IOException {
+        List<Song> songs = songRepository.findByTempoGreaterThanEqualAndTempoLessThanEqualAndGenreContainingIgnoreCase(tempo - 20, tempo + 20, genre);
+        if (songs.isEmpty() || songs.size() < 20) {
+            log("Finding new songs");
+            populateDatabase("irrelevant", tempo);
+            songs = songRepository.findByTempoGreaterThanEqualAndTempoLessThanEqualAndGenreContainingIgnoreCase(tempo - 20, tempo + 20, genre);
+        } else {
+            log("Songs already exist, hurray for cache");
+        }
+        return songs;
     }
 
     public List<Song> getCachedSongsOrGetAndPopulate(String query) throws IOException {
-        List<Song> songs = songRepository.findByTrackContainingIgnoreCase(query);
-        if (songs.isEmpty() || songs.size() < 15) {
-            System.out.println("POPULATED THIS TIME");
-            populateDatabase(query);
-            songs = songRepository.findByTrackContainingIgnoreCase(query);
+        List<Song> songs = songRepository.findByTrackContainingIgnoreCaseOrArtistContainingIgnoreCaseOrAlbumContainingIgnoreCase(query, query, query);
+        if (songs.isEmpty() || songs.size() < 10) {
+            log("finding new songs, this may take a while");
+            populateDatabase(query, -100);
+            songs = songRepository.findByTrackContainingIgnoreCaseOrArtistContainingIgnoreCaseOrAlbumContainingIgnoreCase(query, query, query);
         } else {
-            System.out.println("Did not populate that time");
+            log("songs already exist, hurray for cache");
         }
         return songs;
     }
@@ -78,9 +88,7 @@ public class SongService {
         }
     }
 
-    private void populateDatabase(String query) throws IOException {
-        String url = "https://api.deezer.com/search?q=track:\"" + URLEncoder.encode(query, StandardCharsets.UTF_8) + "\"&order=RANKING&limit=50";
-
+    private void saveSongsFromQuery(String url) throws IOException {
         Request request = new Request.Builder().url(url).get().build();
 
         try (Response response = okHttpClient.newCall(request).execute()) {
@@ -133,11 +141,28 @@ public class SongService {
                     }
                 }
 
-                if (!genre_name.isEmpty() && tempo != 0 && songRepository.findByTrackId(trackId) == null) {
+                if (!genre_name.isEmpty() && !songRepository.existsByTrackId(trackId) && tempo != 0) {
                     Song song = new Song(trackId, artist_id, genre_name, album_id, tempo, track, artist_name, album_name);
+                    log("NEW SONG ADDED GUYS IT HAS name " + track);
+
                     songRepository.save(song);
                 }
             }
         }
+    }
+
+    private void populateDatabase(String query, double tempo_) throws IOException {
+        String url = "";
+        if (tempo_ == -100) {
+            List<String> queryPossibilities = Arrays.asList("track:\"", "artist:\"", "album:\"");
+            for (String possibility : queryPossibilities) {
+                url = "https://api.deezer.com/search?q=" + possibility + URLEncoder.encode(query, StandardCharsets.UTF_8) + "\"&order=RANKING&limit=50";
+                saveSongsFromQuery(url);
+            }
+        } else {
+            url = "https://api.deezer.com/search?q=bpm_min=" + Double.toString(tempo_ - 20) + "&bpm_max=" + Double.toString(tempo_ + 20) + "&limit=50";
+            saveSongsFromQuery(url);
+        }
+
     }
 }
